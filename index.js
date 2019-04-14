@@ -123,10 +123,10 @@ Toolkit.run( async ( tools ) => {
     // Wait for completion
     await Promise.all( createCards ).catch( error => tools.exit.failure( error ) );
 
-    // // Log success message
-    // tools.log.success(
-    //   `Moved assigned issue "${ issueTitle }" to "${ column.name }".`
-    // );
+    // Log success message
+    tools.log.success(
+      `Moved newly assigned issue "${ issueTitle }" to "${ column.name }".`
+    );
   }
   catch( error ){
     tools.exit.failure( error );
