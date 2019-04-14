@@ -58,8 +58,6 @@ Toolkit.run( async ( tools ) => {
       }
     }`);
 
-    tools.log( resource.projectCards );
-
     // Get the card id and the column name
     const cardId = resource.projectCards.nodes 
       && resource.projectCards.nodes[ 0 ]
@@ -85,9 +83,6 @@ Toolkit.run( async ( tools ) => {
       && resource.repository.owner.projects
       && resource.repository.owner.projects.nodes
       || [];
-
-    tools.log( repoProjects );
-    tools.log( orgProjects );
     
     // Get the columns with matching names
     const columns = [ ...repoProjects, ...orgProjects ]
@@ -102,8 +97,8 @@ Toolkit.run( async ( tools ) => {
       tools.exit.failure( `Could not find "${ projectName }" with "${ columnName }" column` );
     }
 
-    // Add the cards to the columns
-    const createCards = columns.map( column => {
+    // Move the cards to the columns
+    const moveCards = columns.map( column => {
       return new Promise( async( resolve, reject ) => {
         try {
           await tools.github.graphql(`mutation {
@@ -121,11 +116,11 @@ Toolkit.run( async ( tools ) => {
     });
 
     // Wait for completion
-    await Promise.all( createCards ).catch( error => tools.exit.failure( error ) );
+    await Promise.all( moveCards ).catch( error => tools.exit.failure( error ) );
 
     // Log success message
     tools.log.success(
-      `Moved newly assigned issue "${ issueTitle }" to "${ column.name }".`
+      `Moved newly assigned issue ${ issue.title } to ${ column.name }.`
     );
   }
   catch( error ){
