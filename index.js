@@ -4,7 +4,7 @@ const { Toolkit } = require( 'actions-toolkit' );
 Toolkit.run( async ( tools ) => {
   try {
     // Get the arguments
-    const projectNumber = tools.arguments._[ 0 ];
+    const projectName = tools.arguments._[ 0 ];
     const columnName    = tools.arguments._[ 1 ];
 
     // Get the data from the event
