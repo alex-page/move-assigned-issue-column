@@ -10,6 +10,9 @@ Toolkit.run( async ( tools ) => {
     // Get the data from the event
     const issue = tools.context.payload.issue;
 
+    tools.log( issue );
+    tools.log( issue.assignee );
+
     // Check if there are existing asignees
     if( issue.assignee && issue.assignee.length ) {
       const assigneeLogins = issue.assignee.map( data => data.login ).join( ', ' );
