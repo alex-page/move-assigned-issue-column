@@ -62,13 +62,15 @@ Toolkit.run( async ( tools ) => {
 
     // Get the card id and the column name
     const cardId = resource.projectCards.nodes 
-      && resource.projectCards.nodes.id
+      && resource.projectCards.nodes[ 0 ]
+      && resource.projectCards.nodes[ 0 ].id
       || null;
 
     tools.log( 'cardid', cardId );
 
-    const currentColumn = resource.projectCards.nodes 
-      && resource.projectCards.nodes.column.name 
+    const currentColumn = resource.projectCards.nodes
+      && resource.projectCards.nodes[ 0 ]
+      && resource.projectCards.nodes[ 0 ].column.name
       || null;
 
     tools.log( 'currentColumn', currentColumn );
