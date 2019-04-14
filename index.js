@@ -75,12 +75,17 @@ Toolkit.run( async ( tools ) => {
       tools.exit.neutral( `The issue ${ issue.title } is already in ${ columnName }.` );
     }
 
+    tools.log( cardId, currentColumn );
+
     // Get an array of all matching projects
     const repoProjects = resource.repository.projects.nodes || [];
     const orgProjects = resource.repository.owner
       && resource.repository.owner.projects
       && resource.repository.owner.projects.nodes
       || [];
+
+    tools.log( repoProjects );
+    tools.log( orgProjects );
     
     // Get the columns with matching names
     const columns = [ ...repoProjects, ...orgProjects ]
@@ -89,6 +94,8 @@ Toolkit.run( async ( tools ) => {
           ? projects.columns.nodes.filter( column => column.name === columnName )
           : [];
       });
+
+    tools.log( columns );
 
     // Check we have a valid column ID
     if( !columns.length ) {
