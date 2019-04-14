@@ -58,6 +58,8 @@ Toolkit.run( async ( tools ) => {
       }
     }`);
 
+    tools.log( resource.projectCards );
+
     // Get the card id and the column name
     const cardId = resource.projectCards.nodes 
       && resource.projectCards.nodes.id
