@@ -21,7 +21,7 @@ action "Move assigned issue to column" {
 }
 ```
 
-> Note: Replace `🎒 Backlog` with your project name and `To do` with your project column.
+> Note: Replace `🎒 Backlog` with your project name and `In progress` with your project column.
 
 
 ## Release history
