@@ -10,9 +10,6 @@ Toolkit.run( async ( tools ) => {
     // Get the data from the event
     const issue = tools.context.payload.issue;
 
-    tools.log( issue );
-    tools.log( issue.assignee );
-
     // Check if there are existing asignees
     if( issue.assignee && issue.assignee.length ) {
       const assigneeLogins = issue.assignee.map( data => data.login ).join( ', ' );
@@ -61,16 +58,18 @@ Toolkit.run( async ( tools ) => {
       }
     }`);
 
-    tools.log( resource );
-
     // Get the card id and the column name
     const cardId = resource.projectCards.nodes 
       && resource.projectCards.nodes.id
       || null;
 
+    tools.log( 'cardid', cardId );
+
     const currentColumn = resource.projectCards.nodes 
       && resource.projectCards.nodes.column.name 
       || null;
+
+    tools.log( 'currentColumn', currentColumn );
 
     if( !cardId || !currentColumn ){
       tools.exit.failure( `The issue ${ issue.title } is not in a project.` );
