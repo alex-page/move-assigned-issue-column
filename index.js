@@ -10,9 +10,10 @@ Toolkit.run( async ( tools ) => {
     // Get the data from the event
     const issue = tools.context.payload.issue;
 
+    if( issue.assignees.length ){
+      tools.exit.neutral( `Not moving the issue as there are already assignees: ${ issue.assignees.join( ' ')}` );
+    }
     tools.log( issue );
-
-    // const currentAssignee = tools.issues.checkAssignee({ owner, repo, assignee });
 
     // // Get the project from the matching provided number
     // const project = resource.repository.projects.nodes
@@ -47,6 +48,6 @@ Toolkit.run( async ( tools ) => {
     tools.exit.failure( error );
   }
 }, {
-  event: [ 'issues.opened' ],
+  event: [ 'issues.assigned' ],
   secrets: [ 'GITHUB_TOKEN' ],
 })
