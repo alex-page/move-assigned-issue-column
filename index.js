@@ -8,49 +8,11 @@ Toolkit.run( async ( tools ) => {
     const columnName    = tools.arguments._[ 1 ];
 
     // Get the data from the event
-    const issueUrl   = tools.context.payload.issue.html_url;
-    const issueTitle = tools.context.payload.issue.title;
-    const issueId    = tools.context.payload.issue.node_id;
+    const issue = tools.context.payload.issue;
 
-    // // Get the issue id, project name and number, column ID and name
-    // const { resource } = await tools.github.graphql(`query {
-    //   resource( url: "${ issueUrl }" ) {
-    //     ... on Issue {
-    //       id
-    //       repository {
-    //         projects( first: 10, states: [OPEN] ) {
-    //           nodes {
-    //             name
-    //             number
-    //             columns( first: 10 ) {
-    //               nodes {
-    //                 id
-    //                 name
-    //               }
-    //             }
-    //           }
-    //         }
-    //         owner {
-    //           url
-    //           ... on Organization {
-    //             projects( first: 10, states: [OPEN] ) {
-    //               nodes {
-    //                 name
-    //                 number
-    //                 columns( first: 10 ) {
-    //                   nodes {
-    //                     id
-    //                     name
-    //                   }
-    //                 }
-    //               }
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // }`);
+    tools.log( issue );
+
+    // const currentAssignee = tools.issues.checkAssignee({ owner, repo, assignee });
 
     // // Get the project from the matching provided number
     // const project = resource.repository.projects.nodes
