@@ -5,13 +5,13 @@ Toolkit.run( async ( tools ) => {
   try {
     // Get the arguments
     const projectName = tools.arguments._[ 0 ];
-    const columnName    = tools.arguments._[ 1 ];
+    const columnName  = tools.arguments._[ 1 ];
 
     // Get the data from the event
     const issue = tools.context.payload.issue;
 
     // Check if there are existing asignees
-    if( issue.assignee.length ) {
+    if( issue.assignee && issue.assignee.length ) {
       const assigneeLogins = issue.assignee.map( data => data.login ).join( ', ' );
       tools.exit.neutral( `${ assigneeLogins } are already assigned. Leaving ${ issue.title } in current column.` );
     }
@@ -57,6 +57,8 @@ Toolkit.run( async ( tools ) => {
         }
       }
     }`);
+
+    tools.log( resource );
 
     // Get the card id and the column name
     const cardId = resource.projectCards.nodes 
