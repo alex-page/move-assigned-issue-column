@@ -5,9 +5,7 @@
 
 ## How to use
 
-To use this action we need the project number and the name of the column for the new issue to go into. 
-- Get the project number from the project URL `projects/1` the number would be `1`.
-- Get the column name from the project board for example "To do".
+To use this action we need the project name and the name of the column for the new issues will go into. The project and column names will be used to get a column ID for automation.
 
 In your project create a new workflow file `.github/main.workflow`:
 ```
@@ -18,12 +16,12 @@ workflow "✨ Move assinged issue to column" {
 
 action "Move assigned issue to column" {
   uses = "alex-page/move-assigned-issue-column@master"
-  args = [ "1", "In progress"]
+  args = [ "🎒 Backlog", "In progress"]
   secrets = ["GITHUB_TOKEN"]
 }
 ```
 
-> Note: Replace `1` with your project number and `To do` with your project column.
+> Note: Replace `🎒 Backlog` with your project name and `To do` with your project column.
 
 
 ## Release history

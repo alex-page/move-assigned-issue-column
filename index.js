@@ -10,35 +10,111 @@ Toolkit.run( async ( tools ) => {
     // Get the data from the event
     const issue = tools.context.payload.issue;
 
-    tools.log( issue );
-
-    if( issue.assignees.length > 1 ){
-      tools.exit.neutral( `Not moving the issue as there are already assignees: ${ issue.assignees.join( ' ')}` );
+    // Check if there are existing asignees
+    if( issue.assignee.length ) {
+      const assigneeLogins = issue.assignee.map( data => data.login ).join( ', ' );
+      tools.exit.neutral( `${ assigneeLogins } are already assigned. Leaving ${ issue.title } in current column.` );
     }
 
-    // // Get the project from the matching provided number
-    // const project = resource.repository.projects.nodes
-    //   .filter( node => node.number === projectNumber )[ 0 ];
+    // Fetch the column ids and names
+    const { resource } = await tools.github.graphql(`query {
+      resource( url: "${ issue.html_url }" ) {
+        ... on Issue {
+          projectCards {
+            nodes {
+              id
+              column {
+                name
+              }
+            }
+          }
+          repository {
+            projects( search: "${ projectName }", first: 10, states: [OPEN] ) {
+              nodes {
+                columns( first: 100 ) {
+                  nodes {
+                    id
+                    name
+                  }
+                }
+              }
+            }
+            owner {
+              ... on Organization {
+                projects( search: "${ projectName }", first: 10, states: [OPEN] ) {
+                  nodes {
+                    columns( first: 100 ) {
+                      nodes {
+                        id
+                        name
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }`);
 
-    // // Get the column from the matching provided column name
-    // const column = project.columns.nodes.filter( node => node.name === columnName )[ 0 ];
-    // const columnId = column.id;
+    // Get the card id and the column name
+    const cardId = resource.projectCards.nodes 
+      && resource.projectCards.nodes.id
+      || null;
 
-    // // Check we have a valid column ID
-    // if( !columnId || !project ) {
-    //   tools.exit.failure(
-    //     `Could not find project number "${ projectNumber }" or column "${ columnName }"`
-    //   );
-    // }
+    const currentColumn = resource.projectCards.nodes 
+      && resource.projectCards.nodes.column.name 
+      || null;
 
-    // // Add the card to the project
-    // await tools.github.graphql(
-    //   `mutation {
-    //     addProjectCard( input: { contentId: "${ issueId }", projectColumnId: "${ columnId }" }) {
-    //       clientMutationId
-    //     }
-    //   }`
-    // );
+    if( !cardId || !currentColumn ){
+      tools.exit.failure( `The issue ${ issue.title } is not in a project.` );
+    }
+
+    if( currentColumn === columnName ){
+      tools.exit.neutral( `The issue ${ issue.title } is already in ${ columnName }.` );
+    }
+
+    // Get an array of all matching projects
+    const repoProjects = resource.repository.projects.nodes || [];
+    const orgProjects = resource.repository.owner
+      && resource.repository.owner.projects
+      && resource.repository.owner.projects.nodes
+      || [];
+    
+    // Get the columns with matching names
+    const columns = [ ...repoProjects, ...orgProjects ]
+      .flatMap( projects => {
+        return projects.columns.nodes
+          ? projects.columns.nodes.filter( column => column.name === columnName )
+          : [];
+      });
+
+    // Check we have a valid column ID
+    if( !columns.length ) {
+      tools.exit.failure( `Could not find "${ projectName }" with "${ columnName }" column` );
+    }
+
+    // Add the cards to the columns
+    const createCards = columns.map( column => {
+      return new Promise( async( resolve, reject ) => {
+        try {
+          await tools.github.graphql(`mutation {
+            moveCard( input: { cardId: "${ cardId }", columnId: "${ column.id }" }) {
+              clientMutationId
+            }
+          }`);
+
+          resolve();
+        }
+        catch( error ){
+          reject( error );
+        }
+      })
+    });
+
+    // Wait for completion
+    await Promise.all( createCards ).catch( error => tools.exit.failure( error ) );
 
     // // Log success message
     // tools.log.success(
