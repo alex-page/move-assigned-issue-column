@@ -66,24 +66,18 @@ Toolkit.run( async ( tools ) => {
       && resource.projectCards.nodes[ 0 ].id
       || null;
 
-    tools.log( 'cardid', cardId );
-
     const currentColumn = resource.projectCards.nodes
       && resource.projectCards.nodes[ 0 ]
       && resource.projectCards.nodes[ 0 ].column.name
       || null;
 
-    tools.log( 'currentColumn', currentColumn );
-
-    if( !cardId || !currentColumn ){
+    if( cardId === null || currentColumn === null ){
       tools.exit.failure( `The issue ${ issue.title } is not in a project.` );
     }
 
     if( currentColumn === columnName ){
       tools.exit.neutral( `The issue ${ issue.title } is already in ${ columnName }.` );
     }
-
-    tools.log( cardId, currentColumn );
 
     // Get an array of all matching projects
     const repoProjects = resource.repository.projects.nodes || [];
@@ -103,8 +97,6 @@ Toolkit.run( async ( tools ) => {
           : [];
       });
 
-    tools.log( columns );
-
     // Check we have a valid column ID
     if( !columns.length ) {
       tools.exit.failure( `Could not find "${ projectName }" with "${ columnName }" column` );
@@ -115,7 +107,7 @@ Toolkit.run( async ( tools ) => {
       return new Promise( async( resolve, reject ) => {
         try {
           await tools.github.graphql(`mutation {
-            moveCard( input: { cardId: "${ cardId }", columnId: "${ column.id }" }) {
+            moveProjectCard( input: { cardId: "${ cardId }", columnId: "${ column.id }" }) {
               clientMutationId
             }
           }`);
