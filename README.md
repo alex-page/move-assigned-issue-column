@@ -1,6 +1,6 @@
-# Move assinged issue to column
+# Move assigned issue to column
 
-> ✨ GitHub action to automagically move assinged issue to a column.
+> ✨ GitHub action to automagically move assigned issue to a column.
 
 
 ## How to use
@@ -9,7 +9,7 @@ To use this action we need the project name and the name of the column for the n
 
 In your project create a new workflow file `.github/main.workflow`:
 ```
-workflow "✨ Move assinged issue to column" {
+workflow "✨ Move assigned issue to column" {
   resolves = ["Move assigned issue to column"]
   on = "issue"
 }
