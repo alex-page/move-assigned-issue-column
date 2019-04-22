@@ -122,7 +122,7 @@ Toolkit.run( async ( tools ) => {
 
     // Log success message
     tools.log.success(
-      `Moved newly assigned issue ${ issue.title } to ${ column.name }.`
+      `Moved newly assigned issue ${ issue.title } to ${ columnName }.`
     );
   }
   catch( error ){
