@@ -3,12 +3,14 @@ const { Toolkit } = require( 'actions-toolkit' );
 
 Toolkit.run( async ( tools ) => {
   try {
+    const { action, issue } = tools.context.payload;
+    if( action !== 'assigned' ){
+      tools.exit.neutral( `Event ${ action } is not supported by this action.` )
+    }
+
     // Get the arguments
     const projectName = tools.arguments._[ 0 ];
     const columnName  = tools.arguments._[ 1 ];
-
-    // Get the data from the event
-    const issue = tools.context.payload.issue;
 
     // Check if there are existing asignees
     if( issue.assignee && issue.assignee.length ) {
@@ -127,6 +129,6 @@ Toolkit.run( async ( tools ) => {
     tools.exit.failure( error );
   }
 }, {
-  event: [ 'issues.assigned' ],
+  event: [ 'issues' ],
   secrets: [ 'GITHUB_TOKEN' ],
 })
