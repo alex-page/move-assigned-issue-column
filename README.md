@@ -26,4 +26,5 @@ action "Move assigned issue to column" {
 
 ## Release history
 
+- v0.0.2 - End in a neutral state for unsupported issue action
 - v0.0.1 - First release
