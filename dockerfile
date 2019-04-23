@@ -11,6 +11,10 @@
 FROM node:alpine
 
 # Labels for GitHub to read your action
+LABEL "maintainer"="Alex Page <alex@alexpage.com.au>"
+LABEL "repository"="https://github.com/alex-page/move-assigned-issue-column"
+LABEL "homepage"="https://github.com/alex-page/move-assigned-issue-column"
+
 LABEL "com.github.actions.name"="Move assigned issues column"
 LABEL "com.github.actions.description"="✨ Magically move assigned issues to a column."
 
