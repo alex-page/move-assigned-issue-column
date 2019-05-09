@@ -12,6 +12,8 @@ Toolkit.run( async ( tools ) => {
     const projectName = tools.arguments._[ 0 ];
     const columnName  = tools.arguments._[ 1 ];
 
+    const secret = process.env.GH_PAT ? process.env.GH_PAT : process.env.GITHUB_TOKEN;
+
     // Check if there are existing asignees
     if( issue.assignee && issue.assignee.length ) {
       const assigneeLogins = issue.assignee.map( data => data.login ).join( ', ' );
@@ -19,36 +21,38 @@ Toolkit.run( async ( tools ) => {
     }
 
     // Fetch the column ids and names
-    const { resource } = await tools.github.graphql(`query {
-      resource( url: "${ issue.html_url }" ) {
-        ... on Issue {
-          projectCards {
-            nodes {
-              id
-              column {
-                name
-              }
-            }
-          }
-          repository {
-            projects( search: "${ projectName }", first: 10, states: [OPEN] ) {
+    const { resource } = await tools.github.graphql({
+      query: `query {
+        resource( url: "${ issue.html_url }" ) {
+          ... on Issue {
+            projectCards {
               nodes {
-                columns( first: 100 ) {
-                  nodes {
-                    id
-                    name
-                  }
+                id
+                column {
+                  name
                 }
               }
             }
-            owner {
-              ... on Organization {
-                projects( search: "${ projectName }", first: 10, states: [OPEN] ) {
-                  nodes {
-                    columns( first: 100 ) {
-                      nodes {
-                        id
-                        name
+            repository {
+              projects( search: "${ projectName }", first: 10, states: [OPEN] ) {
+                nodes {
+                  columns( first: 100 ) {
+                    nodes {
+                      id
+                      name
+                    }
+                  }
+                }
+              }
+              owner {
+                ... on Organization {
+                  projects( search: "${ projectName }", first: 10, states: [OPEN] ) {
+                    nodes {
+                      columns( first: 100 ) {
+                        nodes {
+                          id
+                          name
+                        }
                       }
                     }
                   }
@@ -57,8 +61,11 @@ Toolkit.run( async ( tools ) => {
             }
           }
         }
+      }`,
+      headers: {
+        authorization: `token ${ secret }`
       }
-    }`);
+    });
 
     // Get the card id and the column name
     const cardId = resource.projectCards.nodes 
@@ -103,11 +110,16 @@ Toolkit.run( async ( tools ) => {
     const moveCards = columns.map( column => {
       return new Promise( async( resolve, reject ) => {
         try {
-          await tools.github.graphql(`mutation {
-            moveProjectCard( input: { cardId: "${ cardId }", columnId: "${ column.id }" }) {
-              clientMutationId
+          await tools.github.graphql({
+            query: `mutation {
+              moveProjectCard( input: { cardId: "${ cardId }", columnId: "${ column.id }" }) {
+                clientMutationId
+              }
+            }`,
+            headers: {
+              authorization: `token ${ secret }`
             }
-          }`);
+          });
 
           resolve();
         }
