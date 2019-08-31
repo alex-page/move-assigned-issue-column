@@ -1,6 +1,6 @@
 {
   "name": "move-assigned-issue-column",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "GitHub action to automagically move assigned issues to a column.",
   "main": "index.js",
   "scripts": {
