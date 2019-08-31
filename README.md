@@ -36,7 +36,7 @@ In your project create a new workflow file `.github/main.workflow`:
 ```
 workflow "✨ Move assigned issue to column" {
   resolves = ["Move assigned issue to column"]
-  on = "issue"
+  on = "issues"
 }
 
 action "Move assigned issue to column" {
@@ -69,7 +69,8 @@ GraphqlError: Resource protected by organization SAML enforcement. You must gran
 
 ## Release history
 
-- v0.0.4 - Deprecated
+- v0.0.5 - Deprecated
+- v0.0.4 - Fix incorrect documentation
 - v0.0.3 - Support for private repos
 - v0.0.2 - End in a neutral state for unsupported issue action
 - v0.0.1 - First release
